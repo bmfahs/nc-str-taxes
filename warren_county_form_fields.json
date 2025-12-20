@@ -336,6 +336,28 @@
         "text": "",
         "font_size": 11
       }
+    },
+    {
+      "page_number": 1,
+      "field_id": "signature",
+      "description": "Digital Signature",
+      "field_label": "Signed:",
+      "label_bounding_box": [
+        48,
+        760,
+        96,
+        776
+      ],
+      "entry_bounding_box": [
+        115,
+        750,
+        370,
+        790
+      ],
+      "entry_text": {
+        "text": "",
+        "image_path": null
+      }
     }
   ]
 }

@@ -6,6 +6,8 @@
 FILER_NAME = "Your Name"
 FILER_EMAIL = "your.email@example.com"
 FILER_PHONE = "555-555-5555"
+SIGNER_TITLE = "Owner"
+SIGNATURE_IMAGE_PATH = None  # Path to transparent PNG/JPG of signature
 
 # NC DOR Account Details
 NC_ACCOUNT_ID = "YOUR_ACCOUNT_ID"

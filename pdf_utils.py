@@ -62,6 +62,24 @@ def create_overlay_pdf(
             can.setStrokeColorRGB(1, 0, 0) # Red
             can.rect(scaled_x_min + x_offset, scaled_y_max + y_offset, scaled_x_max - scaled_x_min, scaled_y_min - scaled_y_max, stroke=1, fill=0)
 
+        # Handle Image
+        image_path = entry_text.get('image_path')
+        if image_path and Path(image_path).exists():
+            # Calculate width/height of the box
+            box_width = scaled_x_max - scaled_x_min
+            box_height = scaled_y_min - scaled_y_max
+            
+            # Draw image (preserve aspect ratio usually, but here we just fit to box or center?)
+            # Let's clean up coordinate calculation first
+            img_x = scaled_x_min + x_offset
+            img_y = scaled_y_max + y_offset # ReportLab draws from bottom-up, scaled_y_max is actually the bottom of the box in PDF coords
+            
+            try:
+                can.drawImage(image_path, img_x, img_y, width=box_width, height=box_height, mask='auto', preserveAspectRatio=True, anchor='c')
+            except Exception as e:
+                print(f"Error drawing image {image_path}: {e}")
+            continue
+
         if not text_content:
             continue
             

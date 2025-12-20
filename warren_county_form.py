@@ -34,6 +34,7 @@ def fill_warren_county_form(
     telephone: str = "",
     title: str = "Owner",
     date: str = None,
+    signature_image_path: str = None,
     debug: bool = False,
 ) -> dict:
     """
@@ -99,7 +100,9 @@ def fill_warren_county_form(
     # Update fields with values
     for field in fields_data["form_fields"]:
         field_id = field.get("field_id", "")
-        if field_id in field_values:
+        if field_id == "signature" and signature_image_path:
+             field["entry_text"]["image_path"] = signature_image_path
+        elif field_id in field_values:
             field["entry_text"]["text"] = field_values[field_id]
     
     # Fill the PDF using local utils

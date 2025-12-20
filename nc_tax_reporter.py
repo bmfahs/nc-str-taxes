@@ -554,7 +554,8 @@ def main():
         state=property_info.get('state', 'NC'),
         zip_code=property_info.get('zip', ''),
         telephone=config.FILER_PHONE,
-        title="Owner",
+        title=getattr(config, 'SIGNER_TITLE', 'Owner'),
+        signature_image_path=getattr(config, 'SIGNATURE_IMAGE_PATH', None),
     )
     
     if pdf_result['success']:
