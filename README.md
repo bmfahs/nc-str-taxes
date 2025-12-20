@@ -7,8 +7,9 @@ Automated monthly tax reporting for North Carolina short-term rentals. Generates
 ## Quick Start
 
 1. **Setup configuration:**
+1. **Setup configuration:**
    ```bash
-   cp config.template.py config.py
+   python setup_config.py
    # Edit config.py with your personal details
    ```
 
@@ -122,6 +123,7 @@ nc_tax_reporter/
 ├── warren_county_form_fields.json  # Form field positions
 ├── config.py                       # Your private config (gitignored)
 ├── config.template.py              # Template for config
+├── setup_config.py                 # Setup script to generate config.py
 ├── .gitignore
 ├── README.md
 ├── data/
