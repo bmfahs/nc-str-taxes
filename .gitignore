@@ -1,6 +1,14 @@
 # Configuration
 config.py
 
+# Data
+data/*
+!data/*.sample.csv
+
+# Reports
+reports/*
+
+
 # Python
 __pycache__/
 *.py[cod]
