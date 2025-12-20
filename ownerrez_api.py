@@ -38,8 +38,7 @@ class OwnerRezAPI:
             property_id: Optional property ID to filter bookings
         """
         self.email = email
-        # Token format: pt_xxxxx - we just need the xxxxx part for auth
-        self.token = token.replace("pt_", "") if token.startswith("pt_") else token
+        self.token = token
         self.property_id = property_id
         self.auth = HTTPBasicAuth(email, self.token)
         self.headers = {
@@ -103,7 +102,7 @@ class OwnerRezAPI:
         if since_utc:
             params["since_utc"] = since_utc.isoformat()
         if self.property_id:
-            params["property_id"] = self.property_id
+            params["property_ids"] = self.property_id
         if not include_canceled:
             params["statuses"] = "confirmed,closed"  # Exclude canceled
             
@@ -179,13 +178,17 @@ def parse_ownerrez_bookings(bookings: list) -> list:
     parsed = []
     
     for booking in bookings:
+        # Skip blocks and canceled bookings
+        if booking.get('type') == 'block' or booking.get('status') == 'canceled':
+            continue
+            
         # Determine source from the booking
         source = determine_source(booking)
         
         # Extract financial information
         # OwnerRez stores amounts in different fields depending on source
         total = extract_total(booking)
-        occupancy_tax = extract_occupancy_tax(booking)
+        occupancy_taxes = extract_occupancy_tax(booking)
         
         parsed.append({
             "confirmation": booking.get("confirmation_code") or booking.get("id", ""),
@@ -193,7 +196,7 @@ def parse_ownerrez_bookings(bookings: list) -> list:
             "depart": parse_date(booking.get("departure") or booking.get("depart")),
             "total": total,
             "source": source,
-            "occupancy_tax": occupancy_tax,
+            "occupancy_tax": occupancy_taxes,
             "property": booking.get("property", {}).get("name", ""),
             "guest_name": f"{booking.get('guest', {}).get('first_name', '')} {booking.get('guest', {}).get('last_name', '')}".strip(),
             "raw_data": booking  # Keep original for debugging

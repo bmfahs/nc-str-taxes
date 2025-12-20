@@ -34,6 +34,7 @@ def fill_warren_county_form(
     telephone: str = "",
     title: str = "Owner",
     date: str = None,
+    debug: bool = False,
 ) -> dict:
     """
     Fill in the Warren County Occupancy Tax Report PDF form.
@@ -100,11 +101,6 @@ def fill_warren_county_form(
         field_id = field.get("field_id", "")
         if field_id in field_values:
             field["entry_text"]["text"] = field_values[field_id]
-    
-    # Write updated fields to temp file
-    # temp_fields_path = script_dir / "temp_warren_fields.json"
-    # with open(temp_fields_path, 'w') as f:
-    #     json.dump(fields_data, f, indent=2)
     
     # Fill the PDF using local utils
     try:

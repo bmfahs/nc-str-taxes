@@ -12,8 +12,18 @@
       "field_id": "name_of_accommodation",
       "description": "Name of Accommodation (property name)",
       "field_label": "Name of Accommodation:",
-      "label_bounding_box": [48, 178, 195, 196],
-      "entry_bounding_box": [198, 228, 530, 246],
+      "label_bounding_box": [
+        48,
+        178,
+        195,
+        196
+      ],
+      "entry_bounding_box": [
+        300,
+        238,
+        582,
+        256
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -24,8 +34,18 @@
       "field_id": "mailing_address",
       "description": "Mailing Address",
       "field_label": "Mailing Address:",
-      "label_bounding_box": [48, 208, 148, 226],
-      "entry_bounding_box": [151, 258, 455, 276],
+      "label_bounding_box": [
+        48,
+        208,
+        148,
+        226
+      ],
+      "entry_bounding_box": [
+        180,
+        268,
+        455,
+        286
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -36,8 +56,18 @@
       "field_id": "telephone",
       "description": "Telephone number",
       "field_label": "Telephone:",
-      "label_bounding_box": [470, 208, 545, 226],
-      "entry_bounding_box": [548, 258, 680, 276],
+      "label_bounding_box": [
+        470,
+        208,
+        545,
+        226
+      ],
+      "entry_bounding_box": [
+        540,
+        267,
+        680,
+        285
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -48,8 +78,18 @@
       "field_id": "city",
       "description": "City",
       "field_label": "City:",
-      "label_bounding_box": [48, 238, 78, 256],
-      "entry_bounding_box": [81, 288, 225, 306],
+      "label_bounding_box": [
+        48,
+        238,
+        78,
+        256
+      ],
+      "entry_bounding_box": [
+        110,
+        298,
+        240,
+        316
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -60,8 +100,18 @@
       "field_id": "state",
       "description": "State",
       "field_label": "State:",
-      "label_bounding_box": [240, 238, 278, 256],
-      "entry_bounding_box": [281, 288, 380, 306],
+      "label_bounding_box": [
+        240,
+        238,
+        278,
+        256
+      ],
+      "entry_bounding_box": [
+        350,
+        298,
+        420,
+        316
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -72,8 +122,18 @@
       "field_id": "zip",
       "description": "Zip code",
       "field_label": "Zip:",
-      "label_bounding_box": [395, 238, 420, 256],
-      "entry_bounding_box": [423, 288, 545, 306],
+      "label_bounding_box": [
+        395,
+        238,
+        420,
+        256
+      ],
+      "entry_bounding_box": [
+        480,
+        298,
+        560,
+        316
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -84,8 +144,18 @@
       "field_id": "reporting_month",
       "description": "Reporting for the month of",
       "field_label": "Reporting for the month of:",
-      "label_bounding_box": [270, 315, 503, 333],
-      "entry_bounding_box": [506, 365, 655, 383],
+      "label_bounding_box": [
+        270,
+        315,
+        503,
+        333
+      ],
+      "entry_bounding_box": [
+        506,
+        388,
+        655,
+        406
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -96,8 +166,18 @@
       "field_id": "line1_gross_receipts",
       "description": "(1) Gross Room/Rental Receipts for the month",
       "field_label": "(1) Gross Room/Rental Receipts for the month:",
-      "label_bounding_box": [130, 345, 503, 363],
-      "entry_bounding_box": [506, 395, 655, 413],
+      "label_bounding_box": [
+        130,
+        345,
+        503,
+        363
+      ],
+      "entry_bounding_box": [
+        506,
+        413,
+        655,
+        431
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -108,8 +188,18 @@
       "field_id": "line2_third_party",
       "description": "(2) Sales a third party has collected",
       "field_label": "(2) Sales a third party has collected:",
-      "label_bounding_box": [180, 375, 503, 393],
-      "entry_bounding_box": [506, 425, 655, 443],
+      "label_bounding_box": [
+        180,
+        375,
+        503,
+        393
+      ],
+      "entry_bounding_box": [
+        506,
+        441,
+        655,
+        459
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -120,8 +210,18 @@
       "field_id": "line3_net_taxable",
       "description": "(3) Total Gross Receipts subject to Occupancy Tax (1) - (2)",
       "field_label": "(3) Total Gross Receipts subject to Occupancy Tax (1) - (2): $",
-      "label_bounding_box": [93, 405, 518, 423],
-      "entry_bounding_box": [521, 455, 655, 473],
+      "label_bounding_box": [
+        93,
+        405,
+        518,
+        423
+      ],
+      "entry_bounding_box": [
+        521,
+        468,
+        655,
+        486
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -132,8 +232,18 @@
       "field_id": "line4_tax_due",
       "description": "(4) Occupancy Tax Due - (3) x 5%",
       "field_label": "(4) Occupancy Tax Due - (3) x 5%: $",
-      "label_bounding_box": [250, 435, 518, 453],
-      "entry_bounding_box": [521, 485, 655, 503],
+      "label_bounding_box": [
+        250,
+        435,
+        518,
+        453
+      ],
+      "entry_bounding_box": [
+        521,
+        492,
+        655,
+        510
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -144,8 +254,18 @@
       "field_id": "line5_adjustments",
       "description": "(5) Adjustments - penalties, etc.",
       "field_label": "(5) Adjustments - penalties, etc. (see instructions):",
-      "label_bounding_box": [150, 465, 503, 483],
-      "entry_bounding_box": [506, 515, 655, 533],
+      "label_bounding_box": [
+        150,
+        465,
+        503,
+        483
+      ],
+      "entry_bounding_box": [
+        506,
+        520,
+        655,
+        538
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -156,8 +276,18 @@
       "field_id": "line6_total_remitted",
       "description": "(6) Total Remitted",
       "field_label": "(6) Total Remitted: $",
-      "label_bounding_box": [320, 495, 518, 513],
-      "entry_bounding_box": [521, 545, 655, 563],
+      "label_bounding_box": [
+        320,
+        495,
+        518,
+        513
+      ],
+      "entry_bounding_box": [
+        521,
+        548,
+        655,
+        566
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -168,8 +298,18 @@
       "field_id": "title",
       "description": "Title of signer",
       "field_label": "Title:",
-      "label_bounding_box": [48, 778, 78, 796],
-      "entry_bounding_box": [81, 800, 370, 818],
+      "label_bounding_box": [
+        302,
+        778,
+        304,
+        796
+      ],
+      "entry_bounding_box": [
+        115,
+        798,
+        370,
+        816
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11
@@ -180,8 +320,18 @@
       "field_id": "date",
       "description": "Date of signing",
       "field_label": "Date:",
-      "label_bounding_box": [48, 808, 78, 826],
-      "entry_bounding_box": [81, 830, 370, 848],
+      "label_bounding_box": [
+        48,
+        808,
+        78,
+        826
+      ],
+      "entry_bounding_box": [
+        115,
+        828,
+        370,
+        846
+      ],
       "entry_text": {
         "text": "",
         "font_size": 11

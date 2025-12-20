@@ -461,7 +461,8 @@ def main():
     api_bookings, api_success = load_bookings_from_api(year, month)
     
     if api_success and api_bookings:
-        all_bookings = api_bookings
+        # Filter API results to be certain we are only using the reporting month
+        all_bookings = filter_bookings_by_month(api_bookings, year, month)
         data_source = "OwnerRez API"
     else:
         # Fallback to CSV files
