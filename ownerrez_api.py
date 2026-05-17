@@ -229,21 +229,44 @@ def determine_source(booking: dict) -> str:
 
 
 def extract_total(booking: dict) -> float:
-    """Extract total booking amount."""
-    # Try various field names
-    for field in ["total", "total_amount", "grand_total", "rent_total"]:
-        if field in booking and booking[field]:
-            return parse_amount(booking[field])
-    
-    # Try to sum from charges
+    """Extract total booking amount (excluding taxes)."""
+    # Prefer summing from charges directly to exclude taxes accurately
     charges = booking.get("charges", [])
     if charges:
-        return sum(parse_amount(c.get("amount", 0)) for c in charges)
-    
-    # Try financial summary
+        non_tax_total = 0.0
+        for c in charges:
+            # Exclude tax charges
+            if str(c.get("type", "")).lower() == "tax":
+                continue
+            
+            # Additional check: sometimes taxes might be placed as a surcharge
+            c_desc = f"{c.get('name', '')} {c.get('description', '')}".lower()
+            if "tax" in c_desc and ("occupancy" in c_desc or "sales" in c_desc or "lodging" in c_desc or "county" in c_desc):
+                continue
+                
+            non_tax_total += parse_amount(c.get("amount", 0))
+        
+        if non_tax_total > 0:
+            return non_tax_total
+
+    # Try rent_total first as it generally doesn't include taxes
+    if booking.get("rent_total"):
+        return parse_amount(booking["rent_total"])
+        
+    # Try financial summary which separates rent and surcharges from taxes
     financial = booking.get("financial", {})
-    if financial:
-        return parse_amount(financial.get("total", 0))
+    if financial and ("rent" in financial or "surcharge" in financial):
+        return parse_amount(financial.get("rent", 0)) + parse_amount(financial.get("surcharge", 0))
+
+    # Fallback to total and subtract known taxes
+    for field in ["total", "total_amount", "grand_total"]:
+        if field in booking and booking[field]:
+            total_val = parse_amount(booking[field])
+            # Try to subtract occupancy tax if we have it
+            for tax_field in ["occupancy_tax", "lodging_tax", "hotel_tax"]:
+                if tax_field in booking and booking[tax_field]:
+                    total_val -= parse_amount(booking[tax_field])
+            return total_val
     
     return 0.0
 
