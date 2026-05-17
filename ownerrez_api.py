@@ -188,7 +188,7 @@ def parse_ownerrez_bookings(bookings: list) -> list:
         # Extract financial information
         # OwnerRez stores amounts in different fields depending on source
         total = extract_total(booking)
-        occupancy_taxes = extract_occupancy_tax(booking)
+        occupancy_taxes, host_collected = extract_occupancy_tax_info(booking)
         
         parsed.append({
             "confirmation": booking.get("confirmation_code") or booking.get("id", ""),
@@ -197,6 +197,7 @@ def parse_ownerrez_bookings(bookings: list) -> list:
             "total": total,
             "source": source,
             "occupancy_tax": occupancy_taxes,
+            "host_collected_tax": host_collected,
             "property": booking.get("property", {}).get("name", ""),
             "guest_name": f"{booking.get('guest', {}).get('first_name', '')} {booking.get('guest', {}).get('last_name', '')}".strip(),
             "raw_data": booking  # Keep original for debugging
@@ -247,24 +248,33 @@ def extract_total(booking: dict) -> float:
     return 0.0
 
 
-def extract_occupancy_tax(booking: dict) -> float:
-    """Extract occupancy tax amount."""
-    # Try direct field
-    for field in ["occupancy_tax", "lodging_tax", "hotel_tax"]:
-        if field in booking and booking[field]:
-            return parse_amount(booking[field])
-    
+def extract_occupancy_tax_info(booking: dict) -> tuple[float, bool]:
+    """Extract occupancy tax amount and whether host collected it."""
     # Look in charges for tax items
     charges = booking.get("charges", [])
     tax_total = 0.0
+    host_collected = False
+    
     for charge in charges:
-        charge_type = (charge.get("type", "") or charge.get("name", "")).lower()
+        charge_type = f"{charge.get('type', '')} {charge.get('name', '')} {charge.get('description', '')}".lower()
         if "tax" in charge_type and "occupancy" in charge_type:
             tax_total += parse_amount(charge.get("amount", 0))
+            if not charge.get("is_channel_managed", True):
+                host_collected = True
         elif "lodging tax" in charge_type:
             tax_total += parse_amount(charge.get("amount", 0))
-    
-    return tax_total
+            if not charge.get("is_channel_managed", True):
+                host_collected = True
+                
+    if tax_total > 0:
+        return tax_total, host_collected
+        
+    # Try direct field as fallback
+    for field in ["occupancy_tax", "lodging_tax", "hotel_tax"]:
+        if field in booking and booking[field]:
+            return parse_amount(booking[field]), False
+            
+    return 0.0, False
 
 
 def parse_amount(value) -> float:

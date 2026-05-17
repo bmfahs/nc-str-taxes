@@ -33,10 +33,13 @@ class Booking:
     occupancy_taxes: Decimal
     source: str  # 'Airbnb', 'VRBO', 'Direct', etc.
     property_name: Optional[str] = None
+    host_collected_tax: bool = False
     
     @property
     def is_marketplace_facilitated(self) -> bool:
         """Check if booking was through a marketplace that collects NC tax."""
+        if self.host_collected_tax:
+            return False
         return self.source in config.MARKETPLACE_FACILITATORS
 
 
@@ -266,7 +269,8 @@ def load_bookings_from_api(year: int, month: int) -> tuple[list[Booking], bool]:
                     gross_earnings=Decimal(str(b.get('total', 0))).quantize(Decimal('0.01')),
                     occupancy_taxes=Decimal(str(b.get('occupancy_tax', 0))).quantize(Decimal('0.01')),
                     source=b.get('source', 'Direct'),
-                    property_name=b.get('property', '')
+                    property_name=b.get('property', ''),
+                    host_collected_tax=b.get('host_collected_tax', False)
                 )
                 bookings.append(booking)
             except (ValueError, KeyError) as e:
@@ -425,8 +429,9 @@ def generate_booking_detail(report: MonthlyTaxReport) -> str:
                      f"${b.gross_earnings:>10,.2f} ${b.occupancy_taxes:>8,.2f}")
     
     output.append("-" * 70)
+    total_tax = sum(b.occupancy_taxes for b in report.bookings)
     output.append(f"{'TOTALS':<15} {'':<25} {'':<10} "
-                 f"${report.line1_gross_receipts:>10,.2f} ${report.warren_county_tax_collected:>8,.2f}")
+                 f"${report.line1_gross_receipts:>10,.2f} ${total_tax:>8,.2f}")
     output.append("")
     return "\n".join(output)
 
@@ -460,18 +465,15 @@ def main():
     # Try OwnerRez API first (includes Airbnb via Transaction Sync)
     api_bookings, api_success = load_bookings_from_api(year, month)
     
-    if api_success and api_bookings:
+    if api_success:
         # Filter API results to be certain we are only using the reporting month
         all_bookings = filter_bookings_by_month(api_bookings, year, month)
         data_source = "OwnerRez API"
     else:
         # Fallback to CSV files
-        if api_success:
-            print("No bookings found via API, trying CSV files...")
-        else:
-            api_config = getattr(config, 'OWNERREZ_API', {})
-            if api_config.get('enabled', False):
-                print("API fetch failed, falling back to CSV files...")
+        api_config = getattr(config, 'OWNERREZ_API', {})
+        if api_config.get('enabled', False):
+            print("API fetch failed, falling back to CSV files...")
             
         airbnb_path = config.DATA_PATHS.get('airbnb_csv', './data/airbnb_transactions.csv')
         ownerrez_path = config.DATA_PATHS.get('ownerrez_csv', './data/ownerrez_booking_summary.csv')
@@ -483,27 +485,12 @@ def main():
         all_bookings = filter_bookings_by_month(all_bookings, year, month)
     
     if not all_bookings:
-        print("\nNo bookings found! Please check your configuration:")
-        api_config = getattr(config, 'OWNERREZ_API', {})
-        print("\nOption 1: Enable OwnerRez API (recommended)")
-        if not api_config.get('enabled', False):
-            print("  Set OWNERREZ_API['enabled'] = True in config.py")
-            print("  Add your email and API token")
-            print("  (Get token from: OwnerRez > Settings > Developer/API Settings)")
+        print("\nNo bookings found.")
+        if api_success:
+             print("Proceeding with zero-value report (API returned 0 bookings).")
         else:
-            print("  API is enabled but no bookings were returned")
-            print("  Check your credentials and property settings")
-        
-        print("\nOption 2: Use CSV files")
-        print(f"  - Airbnb CSV: {config.DATA_PATHS.get('airbnb_csv')}")
-        print(f"  - OwnerRez CSV: {config.DATA_PATHS.get('ownerrez_csv')}")
-        print("\n  Export steps:")
-        print("  1. Export Airbnb transactions from:")
-        airbnb_user_id = getattr(config, 'AIRBNB_USER_ID', 'YOUR_USER_ID')
-        print(f"     https://www.airbnb.com/users/transaction_history/{airbnb_user_id}/paid")
-        print("  2. Export OwnerRez Booking Summary by Month")
-        print("  3. Place CSV files in the paths configured in config.py")
-        sys.exit(1)
+             print("Warning: No bookings found in CSV files or files missing.")
+             print("Proceeding with zero-value report. If this is unexpected, check your data/ folder or API config.")
     
     print(f"\nData source: {data_source}")
     print(f"Bookings for {datetime(year, month, 1).strftime('%B %Y')}: {len(all_bookings)}")
