@@ -105,9 +105,30 @@ class OwnerRezAPI:
             params["property_ids"] = self.property_id
         if not include_canceled:
             params["statuses"] = "confirmed,closed"  # Exclude canceled
+        params["limit"] = 100  # Fetch up to 100 per page to minimize requests
             
-        result = self._request("GET", "bookings", params=params)
-        return result.get("items", [])
+        all_items = []
+        endpoint = "bookings"
+        
+        while endpoint:
+            result = self._request("GET", endpoint, params=params)
+            items = result.get("items", [])
+            all_items.extend(items)
+            
+            next_url = result.get("next_page_url")
+            if next_url:
+                # next_page_url comes back as e.g. /v2/bookings?property_ids=...&cursor=...
+                # Remove the /v2/ prefix since _request adds BASE_URL_V2
+                if next_url.startswith("/v2/"):
+                    endpoint = next_url[4:]
+                else:
+                    endpoint = next_url
+                # Params are already included in next_url
+                params = None
+            else:
+                endpoint = None
+                
+        return all_items
     
     def get_booking_detail(self, booking_id: str) -> dict:
         """Get detailed information for a specific booking."""
@@ -139,9 +160,16 @@ class OwnerRezAPI:
             include_canceled=False
         )
         
+        # Since v2 API fetches all bookings (arrive_from unsupported), we must filter locally
+        month_bookings = []
+        for b in bookings:
+            arrive_date = parse_date(b.get("arrival") or b.get("arrive"))
+            if arrive_date and arrive_date.year == year and arrive_date.month == month:
+                month_bookings.append(b)
+        
         # Enrich with details if needed
         enriched = []
-        for booking in bookings:
+        for booking in month_bookings:
             # Basic booking info should include what we need
             # but we can fetch details if financial info is missing
             if not booking.get("charges") and not booking.get("total"):
