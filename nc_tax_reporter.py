@@ -316,8 +316,9 @@ def generate_e500_report(report: MonthlyTaxReport) -> str:
     output.append(f"  Line 2 - Sales for Resale:         ${report.line2_sales_for_resale:>12,.2f}")
     output.append(f"           (Marketplace-facilitated: Airbnb, VRBO)")
     output.append("")
-    output.append(f"  Line 3 - Net Taxable (L1 - L2):    ${report.line3_net_taxable:>12,.2f}")
-    output.append(f"           (Direct bookings YOU must remit tax on)")
+    output.append(f"  Line 3 - Net Taxable Sales:        ${report.line3_net_taxable:>12,.2f}")
+    output.append(f"           (Fill this amount in the 'Receipts' column for")
+    output.append(f"            State 4.75% and County 2.00% rows below)")
     output.append("")
     output.append("-" * 70)
     output.append("BREAKDOWN BY SOURCE:")
@@ -334,8 +335,14 @@ def generate_e500_report(report: MonthlyTaxReport) -> str:
     output.append("")
     
     if report.line3_net_taxable > 0:
-        tax_due = report.line3_net_taxable * Decimal(str(config.NC_TAX_RATES['combined_rate']))
-        output.append(f"ESTIMATED TAX DUE (Direct @ {config.NC_TAX_RATES['combined_rate']*100:.2f}%): ${tax_due:,.2f}")
+        state_tax_due = (report.line3_net_taxable * Decimal(str(config.NC_TAX_RATES['state_sales_tax']))).quantize(Decimal('0.01'))
+        county_tax_due = (report.line3_net_taxable * Decimal(str(config.NC_TAX_RATES['local_sales_tax']))).quantize(Decimal('0.01'))
+        total_tax_due = state_tax_due + county_tax_due
+        
+        output.append("E-500 TAX DUE CALCULATION:")
+        output.append(f"  State Tax ({config.NC_TAX_RATES['state_sales_tax']*100:.2f}%):                 ${state_tax_due:>12,.2f}")
+        output.append(f"  Warren County Tax ({config.NC_TAX_RATES['local_sales_tax']*100:.2f}%):         ${county_tax_due:>12,.2f}")
+        output.append(f"  Total E-500 Tax Due:               ${total_tax_due:>12,.2f}")
     else:
         output.append("TAX DUE: $0.00 (All sales marketplace-facilitated)")
     
